@@ -1,7 +1,7 @@
 package com.workintech.s17d2.model;
 
 public class MidDeveloper extends Developer{
-    public MidDeveloper(String name, int id, double salary, Experience experience) {
-        super(id, name, salary, experience);
+    public MidDeveloper(int id, String name, double salary) {
+        super(id, name, salary, Experience.MID);
     }
 }

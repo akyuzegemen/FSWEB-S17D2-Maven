@@ -1,9 +1,8 @@
 package com.workintech.s17d2.rest;
 
 
+import com.workintech.s17d2.model.*;
 import jakarta.annotation.PostConstruct;
-import com.workintech.s17d2.model.Developer;
-import com.workintech.s17d2.model.Experience;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +17,12 @@ import java.util.Map;
 public class DeveloperController {
     private Map<Integer, Developer> developers;
     private Taxable taxable;
+
     @PostConstruct
     public void initDevelopers()
     {
         this.developers = new HashMap<>();
 
-//        this.developers.put(1, new Developer(1, "Initial Developer", 5000.0, Experience.JUNIOR));
     }
 
 
@@ -32,17 +31,16 @@ public class DeveloperController {
     }
 
     @Autowired
-    public DeveloperController(@Qualifier("developerTax") Taxable developerTax)
+    public DeveloperController(Taxable taxable)
     {
-        this.taxable = developerTax;
+        this.taxable = taxable;
     }
 
 
     @GetMapping("/developers")
-    public List<Developer> getDevelopersValues()
-    {
-        List<Developer> valuesList = new ArrayList<>((this.getDevelopers()).values());
-        return valuesList;
+    public List<Developer> getAllDevelopers(){
+//        List<Developer> valuesList = new ArrayList<>((this.getDevelopers()).values());
+        return this.getDevelopers().values().stream().toList();
     }
 
     @GetMapping("/developers/{id}")
@@ -52,25 +50,27 @@ public class DeveloperController {
     }
 
     @PostMapping("/developers")
-    public void putDevelopers(@RequestBody Integer id, @RequestBody String name, @RequestBody double salary, @RequestBody String experience)
+    public Developer createDeveloper(@RequestBody Developer developer)
     {
-        Experience experience1 = null;
-        double salary1 = 0;
-        switch (experience){
-            case "JUNIOR":
-                experience1 = Experience.JUNIOR;
-                salary1 = salary - taxable.getSimpleTaxRate();
-            case "MID":
-                experience1 = Experience.MID;
-                salary1 = salary - taxable.getMiddleTaxRate();
-            case "SENIOR":
-                experience1 = Experience.SENIOR;
-                salary1 = salary - taxable.getUpperTaxRate();
-            default:
-                break;
-        }
-        this.developers.put(id, new Developer(id, name, salary1, experience1));
+        Developer newDeveloper = null;
+        double vergi;
+        double salary = developer.getSalary();
+        switch (developer.getExperience())
+        {
+            case JUNIOR:
+                vergi = developer.getSalary() * taxable.getSimpleTaxRate()/100;
+                newDeveloper = new JuniorDeveloper(developer.getId(), developer.getName(), developer.getSalary() - vergi);
+            case MID:
+                vergi = developer.getSalary() * taxable.getMiddleTaxRate()/100;
+                newDeveloper = new MidDeveloper(developer.getId(), developer.getName(), developer.getSalary()- vergi);
 
+            case SENIOR:
+                vergi = developer.getSalary() * taxable.getUpperTaxRate()/100;
+                newDeveloper = new SeniorDeveloper(developer.getId(), developer.getName(), developer.getSalary() - vergi);
+
+        }
+        this.developers.put(newDeveloper.getId(), newDeveloper);
+        return newDeveloper;
     }
 
 
@@ -78,8 +78,26 @@ public class DeveloperController {
     public Developer update(@PathVariable Integer id, @RequestBody Developer developer)
     {
         developer.setId(id);
-        this.developers.put(id, developer);
-        return developer;
+
+        Developer newDeveloper = null;
+        double vergi;
+        double salary = developer.getSalary();
+        switch (developer.getExperience())
+        {
+            case JUNIOR:
+                vergi = developer.getSalary() * taxable.getSimpleTaxRate()/100;
+                newDeveloper = new JuniorDeveloper(developer.getId(), developer.getName(), developer.getSalary() - vergi);
+            case MID:
+                vergi = developer.getSalary() * taxable.getMiddleTaxRate()/100;
+                newDeveloper = new MidDeveloper(developer.getId(), developer.getName(), developer.getSalary()- vergi);
+
+            case SENIOR:
+                vergi = developer.getSalary() * taxable.getUpperTaxRate()/100;
+                newDeveloper = new SeniorDeveloper(developer.getId(), developer.getName(), developer.getSalary() - vergi);
+
+        }
+        this.developers.put(newDeveloper.getId(), newDeveloper);
+        return newDeveloper;
     }
 
     @DeleteMapping("/developers/{id}")
