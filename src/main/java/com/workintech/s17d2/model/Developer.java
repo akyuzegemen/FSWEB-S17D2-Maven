@@ -1,16 +1,18 @@
 package com.workintech.s17d2.model;
 
+import org.springframework.stereotype.Component;
+
 
 public class Developer {
     private String name;
-    private int id;
+    private Integer id;
     private double salary;
     private Experience experience;
 
 
-    public Developer(int id, String name, double salary, Experience experience) {
-        this.name = name;
+    public Developer(Integer id, String name, double salary, Experience experience) {
         this.id = id;
+        this.name = name;
         this.salary = salary;
         this.experience = experience;
     }
@@ -23,11 +25,11 @@ public class Developer {
         this.name = name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

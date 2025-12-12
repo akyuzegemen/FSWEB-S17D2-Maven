@@ -15,11 +15,11 @@ import java.util.Map;
 
 @RestController
 public class DeveloperController {
-    private Map<Integer, Developer> developers;
+    public Map<Integer, Developer> developers;
     private Taxable taxable;
 
     @PostConstruct
-    public void initDevelopers()
+    public void init()
     {
         this.developers = new HashMap<>();
 
@@ -60,13 +60,17 @@ public class DeveloperController {
             case JUNIOR:
                 vergi = developer.getSalary() * taxable.getSimpleTaxRate()/100;
                 newDeveloper = new JuniorDeveloper(developer.getId(), developer.getName(), developer.getSalary() - vergi);
+                break;
             case MID:
                 vergi = developer.getSalary() * taxable.getMiddleTaxRate()/100;
                 newDeveloper = new MidDeveloper(developer.getId(), developer.getName(), developer.getSalary()- vergi);
+                break; // break konulmaz ise alttaki duruma duser
+
 
             case SENIOR:
                 vergi = developer.getSalary() * taxable.getUpperTaxRate()/100;
                 newDeveloper = new SeniorDeveloper(developer.getId(), developer.getName(), developer.getSalary() - vergi);
+                break;
 
         }
         this.developers.put(newDeveloper.getId(), newDeveloper);
@@ -87,13 +91,16 @@ public class DeveloperController {
             case JUNIOR:
                 vergi = developer.getSalary() * taxable.getSimpleTaxRate()/100;
                 newDeveloper = new JuniorDeveloper(developer.getId(), developer.getName(), developer.getSalary() - vergi);
+                break;
             case MID:
                 vergi = developer.getSalary() * taxable.getMiddleTaxRate()/100;
                 newDeveloper = new MidDeveloper(developer.getId(), developer.getName(), developer.getSalary()- vergi);
+                break;
 
             case SENIOR:
                 vergi = developer.getSalary() * taxable.getUpperTaxRate()/100;
                 newDeveloper = new SeniorDeveloper(developer.getId(), developer.getName(), developer.getSalary() - vergi);
+                break;
 
         }
         this.developers.put(newDeveloper.getId(), newDeveloper);
